@@ -1,0 +1,1167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ThumbStack — Build, Solve, Scale</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Cabinet+Grotesk:wght@300;400;500;700;800;900&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+:root {
+  --g1: #00FF87;
+  --g2: #0FFD9A;
+  --g3: #9BFFE0;
+  --white: #FFFFFF;
+  --offwhite: #F5F7F2;
+  --ink: #0A0F0A;
+  --ink2: #1A231A;
+  --muted: #6B7C6B;
+  --border: rgba(0,0,0,0.08);
+  --green-light: rgba(0,255,135,0.08);
+}
+
+body {
+  font-family: 'Cabinet Grotesk', sans-serif;
+  background: var(--white);
+  color: var(--ink);
+  overflow-x: hidden;
+  cursor: none;
+}
+
+.cursor {
+  width: 10px; height: 10px;
+  background: var(--g1);
+  border-radius: 50%;
+  position: fixed;
+  pointer-events: none;
+  z-index: 9999;
+  transform: translate(-50%, -50%);
+  transition: transform 0.08s, width 0.2s, height 0.2s;
+  mix-blend-mode: multiply;
+}
+.cursor-ring {
+  width: 36px; height: 36px;
+  border: 1.5px solid var(--g1);
+  border-radius: 50%;
+  position: fixed;
+  pointer-events: none;
+  z-index: 9998;
+  transform: translate(-50%, -50%);
+  transition: transform 0.18s ease, width 0.2s, height 0.2s, opacity 0.2s;
+  opacity: 0.5;
+}
+
+nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 500;
+  padding: 24px 64px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: background 0.3s, padding 0.3s, box-shadow 0.3s;
+}
+nav.scrolled {
+  background: rgba(255,255,255,0.94);
+  backdrop-filter: blur(14px);
+  padding: 16px 64px;
+  box-shadow: 0 1px 0 var(--border);
+}
+.nav-logo {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.6rem;
+  letter-spacing: 0.06em;
+  color: var(--ink);
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.logo-dot {
+  width: 8px; height: 8px;
+  background: var(--g1);
+  border-radius: 50%;
+  display: inline-block;
+  animation: blink 2s ease-in-out infinite;
+}
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+.nav-links {
+  display: flex; gap: 36px; list-style: none; align-items: center;
+}
+.nav-links a {
+  font-size: 0.88rem; font-weight: 500;
+  color: var(--ink); text-decoration: none;
+  letter-spacing: 0.01em; opacity: 0.6;
+  transition: opacity 0.2s;
+}
+.nav-links a:hover { opacity: 1; }
+.nav-cta-btn {
+  background: var(--ink) !important; color: var(--white) !important;
+  padding: 10px 24px !important; border-radius: 100px !important;
+  opacity: 1 !important; font-weight: 700 !important;
+  font-size: 0.82rem !important; letter-spacing: 0.04em !important;
+  transition: background 0.2s, transform 0.2s !important;
+}
+.nav-cta-btn:hover { background: var(--ink2) !important; transform: scale(1.04); }
+
+/* HERO */
+#hero {
+  min-height: 100vh;
+  background: var(--offwhite);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  position: relative;
+  overflow: hidden;
+}
+.hero-left {
+  padding: 160px 64px 80px;
+  display: flex; flex-direction: column; justify-content: center;
+  position: relative; z-index: 2;
+}
+.hero-right {
+  position: relative;
+  display: flex; align-items: center; justify-content: center;
+  overflow: hidden;
+}
+.hero-blob {
+  position: absolute;
+  width: 700px; height: 700px;
+  background: linear-gradient(135deg, var(--g1) 0%, var(--g3) 50%, #60EFCE 100%);
+  border-radius: 60% 40% 70% 30% / 50% 60% 40% 50%;
+  animation: morphBlob 9s ease-in-out infinite;
+  opacity: 0.9;
+  right: -100px;
+}
+@keyframes morphBlob {
+  0%,100% { border-radius: 60% 40% 70% 30% / 50% 60% 40% 50%; transform: rotate(0deg) scale(1); }
+  33%     { border-radius: 40% 60% 30% 70% / 60% 40% 60% 40%; transform: rotate(3deg) scale(1.04); }
+  66%     { border-radius: 50% 50% 60% 40% / 40% 60% 50% 60%; transform: rotate(-3deg) scale(0.98); }
+}
+
+/* TECH STACK FLOATING CARDS */
+.float-card {
+  position: absolute;
+  background: rgba(255,255,255,0.92);
+  backdrop-filter: blur(10px);
+  border-radius: 16px;
+  padding: 18px 22px;
+  box-shadow: 0 12px 40px rgba(0,0,0,0.1);
+  z-index: 3;
+  font-family: 'Cabinet Grotesk', sans-serif;
+}
+.float-card-1 { top: 22%; left: 8%; animation: floatY 5s ease-in-out infinite; }
+.float-card-2 { bottom: 26%; right: 12%; animation: floatY 6s ease-in-out infinite 1.5s; }
+.float-card-3 { top: 52%; left: 5%; animation: floatY 7s ease-in-out infinite 0.8s; }
+@keyframes floatY { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-12px)} }
+.fc-label {
+  font-size: 0.65rem; font-weight: 700;
+  letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--muted); margin-bottom: 6px;
+}
+.fc-value {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.4rem; letter-spacing: 0.04em;
+  color: var(--ink); line-height: 1;
+}
+.fc-sub { font-size: 0.72rem; color: var(--muted); margin-top: 2px; }
+.fc-bar {
+  height: 4px;
+  background: linear-gradient(90deg, var(--g1), var(--g3));
+  border-radius: 2px; margin-top: 10px; width: 80%;
+  animation: barFill 3s ease-in-out infinite;
+}
+@keyframes barFill { 0%,100%{width:80%} 50%{width:100%} }
+
+/* tech pill badges inside float cards */
+.fc-pills { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 8px; }
+.fc-pill {
+  font-size: 0.6rem; font-weight: 700;
+  letter-spacing: 0.08em; text-transform: uppercase;
+  padding: 3px 9px; border-radius: 100px;
+  background: rgba(0,200,80,0.1); color: #00AA58;
+  border: 1px solid rgba(0,200,80,0.2);
+}
+
+.hero-eyebrow {
+  display: inline-flex; align-items: center; gap: 10px;
+  font-size: 0.75rem; font-weight: 700;
+  letter-spacing: 0.2em; text-transform: uppercase;
+  color: var(--muted); margin-bottom: 28px;
+  opacity: 0; animation: fadeUp 0.7s ease forwards 0.3s;
+}
+.eyebrow-line { width: 32px; height: 2px; background: linear-gradient(90deg, var(--g1), var(--g2)); border-radius: 1px; }
+.hero-h1 {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(5rem, 9vw, 9rem);
+  line-height: 0.92; letter-spacing: 0.02em; color: var(--ink);
+  opacity: 0; animation: fadeUp 0.7s ease forwards 0.5s;
+}
+.h1-green {
+  -webkit-text-fill-color: transparent;
+  background: linear-gradient(135deg, #00CC6A 0%, var(--g1) 50%, var(--g3) 100%);
+  -webkit-background-clip: text; background-clip: text; display: block;
+}
+.hero-p {
+  font-size: 1.05rem; color: var(--muted); line-height: 1.75;
+  max-width: 420px; margin-top: 28px; font-weight: 400;
+  opacity: 0; animation: fadeUp 0.7s ease forwards 0.7s;
+}
+.hero-btns {
+  display: flex; gap: 14px; margin-top: 44px;
+  opacity: 0; animation: fadeUp 0.7s ease forwards 0.9s;
+}
+.btn-dark {
+  background: var(--ink); color: var(--white);
+  padding: 15px 34px; border-radius: 100px;
+  font-weight: 700; font-size: 0.9rem; text-decoration: none;
+  letter-spacing: 0.02em; transition: transform 0.2s, box-shadow 0.2s;
+  display: inline-flex; align-items: center; gap: 8px;
+}
+.btn-dark:hover { transform: translateY(-2px); box-shadow: 0 10px 28px rgba(0,0,0,0.18); }
+.btn-ghost {
+  background: transparent; color: var(--ink);
+  padding: 15px 28px; border-radius: 100px;
+  font-weight: 600; font-size: 0.9rem; text-decoration: none;
+  border: 1.5px solid rgba(0,0,0,0.14);
+  transition: border-color 0.2s, background 0.2s;
+}
+.btn-ghost:hover { border-color: var(--ink); background: rgba(0,0,0,0.03); }
+.hero-divider {
+  display: flex; gap: 48px; margin-top: 60px;
+  padding-top: 44px; border-top: 1.5px solid var(--border);
+  opacity: 0; animation: fadeUp 0.7s ease forwards 1.1s;
+}
+.hd-num { font-family: 'Bebas Neue', sans-serif; font-size: 2.8rem; letter-spacing: 0.02em; color: var(--ink); line-height: 1; }
+.hd-label { font-size: 0.72rem; font-weight: 700; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; margin-top: 5px; }
+@keyframes fadeUp { from{opacity:0;transform:translateY(24px)} to{opacity:1;transform:translateY(0)} }
+
+/* TICKER */
+.ticker { background: var(--ink); padding: 14px 0; overflow: hidden; }
+.ticker-track {
+  display: flex; gap: 0;
+  animation: ticker 22s linear infinite; white-space: nowrap;
+}
+@keyframes ticker { from{transform:translateX(0)} to{transform:translateX(-50%)} }
+.ticker-item {
+  font-family: 'Bebas Neue', sans-serif; font-size: 1rem;
+  letter-spacing: 0.14em; color: rgba(255,255,255,0.35);
+  padding: 0 32px; flex-shrink: 0;
+  display: flex; align-items: center; gap: 32px;
+}
+.ticker-sep { color: var(--g1); font-size: 1.2rem; }
+
+/* ABOUT */
+#about {
+  padding: 120px 64px; background: var(--white);
+  display: grid; grid-template-columns: 5fr 4fr;
+  gap: 80px; align-items: center;
+}
+.section-tag {
+  font-size: 0.7rem; font-weight: 700;
+  letter-spacing: 0.22em; text-transform: uppercase;
+  color: #00AA58; margin-bottom: 18px;
+  display: flex; align-items: center; gap: 10px;
+}
+.section-tag::after {
+  content: ''; flex: 1; height: 1.5px;
+  background: linear-gradient(90deg, #00AA58, transparent); max-width: 60px;
+}
+.section-h2 {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(2.6rem, 4.5vw, 4.2rem);
+  letter-spacing: 0.02em; line-height: 1.0; color: var(--ink);
+}
+.about-body p { color: var(--muted); font-size: 1rem; line-height: 1.8; margin-top: 22px; }
+.about-cards { display: flex; flex-direction: column; gap: 16px; }
+.acard {
+  background: var(--offwhite); border-radius: 16px; padding: 28px;
+  border: 1.5px solid var(--border);
+  display: flex; gap: 18px; align-items: flex-start;
+  transition: border-color 0.25s, transform 0.25s;
+}
+.acard:hover { border-color: var(--g1); transform: translateX(6px); }
+.acard-icon {
+  width: 44px; height: 44px;
+  background: linear-gradient(135deg, var(--g1), var(--g3));
+  border-radius: 12px; display: flex; align-items: center; justify-content: center;
+  font-size: 20px; flex-shrink: 0;
+}
+.acard-title { font-weight: 800; font-size: 0.95rem; color: var(--ink); margin-bottom: 5px; }
+.acard-desc { font-size: 0.82rem; color: var(--muted); line-height: 1.6; }
+
+/* TECH STACK SECTION */
+#techstack {
+  background: var(--offwhite);
+  padding: 100px 64px;
+}
+.tech-intro { margin-bottom: 56px; }
+.tech-categories {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+.tech-cat {
+  background: var(--white);
+  border-radius: 20px;
+  padding: 36px 32px;
+  border: 1.5px solid var(--border);
+  transition: border-color 0.25s, transform 0.25s, box-shadow 0.25s;
+}
+.tech-cat:hover {
+  border-color: rgba(0,255,135,0.4);
+  transform: translateY(-4px);
+  box-shadow: 0 16px 40px rgba(0,0,0,0.08);
+}
+.tech-cat-icon {
+  font-size: 28px; margin-bottom: 16px; display: block;
+}
+.tech-cat-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.1rem; letter-spacing: 0.08em;
+  color: var(--ink); margin-bottom: 18px;
+}
+.tech-badges { display: flex; flex-wrap: wrap; gap: 8px; }
+.tech-badge {
+  font-size: 0.72rem; font-weight: 700;
+  letter-spacing: 0.06em; text-transform: uppercase;
+  padding: 6px 14px; border-radius: 8px;
+  transition: all 0.2s;
+}
+/* backend */
+.tb-backend { background: rgba(0,200,80,0.08); color: #00883A; border: 1.5px solid rgba(0,200,80,0.2); }
+.tb-backend:hover { background: rgba(0,200,80,0.16); }
+/* cms */
+.tb-cms { background: rgba(33,150,243,0.08); color: #1565C0; border: 1.5px solid rgba(33,150,243,0.18); }
+.tb-cms:hover { background: rgba(33,150,243,0.16); }
+/* cloud */
+.tb-cloud { background: rgba(255,153,0,0.08); color: #B45309; border: 1.5px solid rgba(255,153,0,0.22); }
+.tb-cloud:hover { background: rgba(255,153,0,0.16); }
+/* frontend */
+.tb-frontend { background: rgba(139,92,246,0.08); color: #6D28D9; border: 1.5px solid rgba(139,92,246,0.18); }
+.tb-frontend:hover { background: rgba(139,92,246,0.16); }
+/* design */
+.tb-design { background: rgba(236,72,153,0.08); color: #9D174D; border: 1.5px solid rgba(236,72,153,0.18); }
+.tb-design:hover { background: rgba(236,72,153,0.16); }
+
+/* SERVICES */
+#services { background: var(--ink); padding: 120px 64px; }
+#services .section-tag { color: var(--g1); }
+#services .section-tag::after { background: linear-gradient(90deg, var(--g1), transparent); }
+#services .section-h2 { color: var(--white); }
+.svc-intro { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 60px; }
+.svc-intro-p { font-size: 0.95rem; color: rgba(255,255,255,0.4); max-width: 320px; line-height: 1.7; }
+.svc-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 1px; background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.06); border-radius: 20px; overflow: hidden;
+}
+.svc-item {
+  background: var(--ink); padding: 48px 36px;
+  transition: background 0.3s; position: relative; overflow: hidden;
+}
+.svc-item::after {
+  content: ''; position: absolute; inset: 0;
+  background: linear-gradient(135deg, rgba(0,255,135,0.05), transparent);
+  opacity: 0; transition: opacity 0.3s;
+}
+.svc-item:hover { background: #111811; }
+.svc-item:hover::after { opacity: 1; }
+.svc-n { font-family: 'Bebas Neue', sans-serif; font-size: 0.85rem; letter-spacing: 0.12em; color: rgba(255,255,255,0.18); margin-bottom: 28px; }
+.svc-emoji { font-size: 26px; margin-bottom: 18px; display: block; }
+.svc-title { font-weight: 800; font-size: 1.15rem; color: var(--white); margin-bottom: 12px; }
+.svc-desc { font-size: 0.85rem; color: rgba(255,255,255,0.38); line-height: 1.7; }
+
+/* PROJECTS */
+#projects { background: var(--white); padding: 120px 64px; }
+.proj-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 56px; }
+.proj-grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 20px; }
+.pcard {
+  background: var(--offwhite); border-radius: 20px; overflow: hidden;
+  border: 1.5px solid var(--border);
+  transition: transform 0.3s, box-shadow 0.3s, border-color 0.3s;
+}
+.pcard:hover { transform: translateY(-8px); box-shadow: 0 24px 64px rgba(0,0,0,0.1); border-color: rgba(0,255,135,0.4); }
+.pcard-lg { grid-column: span 8; }
+.pcard-sm { grid-column: span 4; }
+.pcard-full { grid-column: span 12; display: grid; grid-template-columns: 1fr 1fr; }
+.pcard-body { padding: 28px; }
+.ptags { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 14px; }
+.ptag {
+  font-size: 0.67rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+  padding: 4px 12px; border-radius: 100px;
+  border: 1.5px solid var(--border); color: var(--muted);
+}
+.ptag-g { border-color: rgba(0,200,80,0.3); color: #00AA58; background: rgba(0,200,80,0.05); }
+.pcard-title { font-weight: 900; font-size: 1.1rem; color: var(--ink); margin-bottom: 10px; letter-spacing: -0.01em; }
+.pcard-desc { font-size: 0.85rem; color: var(--muted); line-height: 1.65; }
+.pcard-foot {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-top: 20px; padding-top: 20px; border-top: 1.5px solid var(--border);
+}
+.pstatus { display: flex; align-items: center; gap: 8px; font-size: 0.75rem; font-weight: 600; color: var(--muted); }
+.sdot { width: 7px; height: 7px; border-radius: 50%; }
+.sdot-green { background: #22C55E; box-shadow: 0 0 6px #22C55E; animation: blink 2s infinite; }
+.sdot-gray { background: #C8D4C8; }
+.sdot-yellow { background: #FACC15; }
+.plink { font-size: 0.76rem; font-weight: 700; color: var(--muted); opacity: 0.45; text-decoration: none; }
+
+/* project card visual placeholder — pure CSS, no image */
+.pcard-visual {
+  position: relative; overflow: hidden;
+  background: linear-gradient(135deg, #F0FFF7 0%, #DCFCE7 100%);
+  display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 14px;
+  padding: 48px 24px;
+}
+.pcard-full .pcard-visual { min-height: 260px; }
+.pcard-lg .pcard-visual { min-height: 200px; }
+.pcard-sm .pcard-visual { min-height: 180px; }
+.pcard-visual::before {
+  content: ''; position: absolute; inset: 0;
+  background-image: linear-gradient(rgba(0,0,0,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(0,0,0,0.04) 1px, transparent 1px);
+  background-size: 28px 28px;
+}
+.pv-badge {
+  position: absolute; top: 16px; right: 16px;
+  background: var(--ink); color: var(--g1);
+  font-size: 0.6rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase;
+  padding: 5px 12px; border-radius: 100px; z-index: 2;
+}
+.pv-icon {
+  width: 64px; height: 64px; border-radius: 16px;
+  background: rgba(255,255,255,0.85);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 28px; position: relative; z-index: 1;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+}
+.pv-stack {
+  display: flex; flex-wrap: wrap; gap: 6px; justify-content: center;
+  position: relative; z-index: 1; max-width: 220px;
+}
+.pv-chip {
+  font-size: 0.6rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+  padding: 4px 10px; border-radius: 6px;
+  background: rgba(255,255,255,0.9); color: #00883A;
+  border: 1px solid rgba(0,200,80,0.25);
+}
+
+/* PROCESS */
+#process { background: var(--offwhite); padding: 120px 64px; }
+.process-grid {
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  margin-top: 60px; position: relative;
+}
+.process-grid::before {
+  content: ''; position: absolute; top: 36px; left: 10%; right: 10%;
+  height: 1.5px; background: linear-gradient(90deg, var(--g1), var(--g3), transparent); z-index: 0;
+}
+.pstep { padding: 0 28px 0 0; position: relative; z-index: 1; }
+.pstep-dot {
+  width: 72px; height: 72px; border-radius: 50%;
+  background: var(--white); border: 2px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 26px; margin-bottom: 24px;
+  transition: border-color 0.3s, background 0.3s;
+}
+.pstep:hover .pstep-dot { border-color: var(--g1); background: rgba(0,255,135,0.08); }
+.pstep-num { font-family: 'Bebas Neue', sans-serif; font-size: 0.78rem; letter-spacing: 0.18em; color: #00AA58; margin-bottom: 10px; }
+.pstep-title { font-weight: 900; font-size: 1.1rem; color: var(--ink); margin-bottom: 10px; letter-spacing: -0.01em; }
+.pstep-desc { font-size: 0.84rem; color: var(--muted); line-height: 1.7; }
+
+/* CTA */
+#contact { background: var(--white); padding: 120px 64px; }
+.cta-inner {
+  background: var(--ink); border-radius: 28px; padding: 80px 80px;
+  display: grid; grid-template-columns: 1fr auto; gap: 60px; align-items: center;
+  position: relative; overflow: hidden;
+}
+.cta-blob { position: absolute; right: -80px; top: -80px; width: 420px; height: 420px; background: radial-gradient(circle, rgba(0,255,135,0.14) 0%, transparent 65%); pointer-events: none; }
+.cta-blob2 { position: absolute; left: 30%; bottom: -100px; width: 300px; height: 300px; background: radial-gradient(circle, rgba(0,255,135,0.07) 0%, transparent 65%); pointer-events: none; }
+.cta-tag { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: var(--g1); margin-bottom: 16px; }
+.cta-h2 { font-family: 'Bebas Neue', sans-serif; font-size: clamp(2.8rem, 5vw, 4.5rem); letter-spacing: 0.02em; line-height: 1.0; color: var(--white); }
+.cta-p { font-size: 0.95rem; color: rgba(255,255,255,0.4); line-height: 1.7; margin-top: 18px; max-width: 480px; }
+.cta-right { display: flex; flex-direction: column; gap: 14px; min-width: 220px; }
+.btn-green {
+  background: linear-gradient(135deg, #00CC6A, var(--g1)); color: var(--ink);
+  padding: 16px 36px; border-radius: 100px; font-weight: 800; font-size: 0.9rem;
+  text-decoration: none; text-align: center; letter-spacing: 0.02em;
+  transition: transform 0.2s, box-shadow 0.2s;
+  box-shadow: 0 8px 32px rgba(0,255,135,0.25);
+}
+.btn-green:hover { transform: translateY(-3px); box-shadow: 0 16px 40px rgba(0,255,135,0.4); }
+.btn-ghost-w {
+  background: transparent; color: rgba(255,255,255,0.6);
+  padding: 14px 28px; border-radius: 100px; font-weight: 600; font-size: 0.88rem;
+  text-decoration: none; text-align: center; border: 1.5px solid rgba(255,255,255,0.1);
+  transition: border-color 0.2s, color 0.2s;
+}
+.btn-ghost-w:hover { border-color: rgba(255,255,255,0.3); color: var(--white); }
+.cta-socials { display: flex; gap: 20px; margin-top: 24px; }
+.cta-socials a { font-size: 0.8rem; font-weight: 600; color: rgba(255,255,255,0.3); text-decoration: none; transition: color 0.2s; }
+.cta-socials a:hover { color: var(--g1); }
+
+/* FOOTER */
+footer {
+  background: var(--ink); padding: 28px 64px;
+  display: flex; justify-content: space-between; align-items: center;
+  border-top: 1px solid rgba(255,255,255,0.06);
+}
+footer .nav-logo { color: var(--white); }
+footer span { font-size: 0.8rem; color: rgba(255,255,255,0.28); }
+
+/* REVEAL */
+.reveal { opacity: 0; transform: translateY(30px); transition: opacity 0.65s ease, transform 0.65s ease; }
+.reveal.up { opacity: 1; transform: none; }
+.d1{transition-delay:0.08s} .d2{transition-delay:0.16s} .d3{transition-delay:0.24s} .d4{transition-delay:0.32s}
+
+::-webkit-scrollbar{width:5px}
+::-webkit-scrollbar-track{background:#fff}
+::-webkit-scrollbar-thumb{background:var(--g1);border-radius:3px}
+
+/* ── TABLET (≤900px) ── */
+@media(max-width:900px){
+  /* hide custom cursor on touch */
+  .cursor,.cursor-ring{display:none}
+  body{cursor:auto}
+
+  /* nav */
+  nav{padding:16px 20px} nav.scrolled{padding:14px 20px}
+  .nav-links{gap:18px}
+  .nav-links a{font-size:0.78rem}
+  .nav-cta-btn{padding:8px 16px !important; font-size:0.76rem !important}
+
+  /* hero */
+  #hero{grid-template-columns:1fr}
+  .hero-right{display:none}
+  .hero-left{padding:110px 28px 64px}
+  .hero-p{font-size:0.96rem; max-width:100%}
+  .hero-divider{gap:32px; margin-top:44px; padding-top:32px}
+
+  /* sections */
+  #about,#services,#projects,#contact,#process,#techstack{padding:80px 28px}
+
+  /* about */
+  #about{grid-template-columns:1fr; gap:40px}
+
+  /* services */
+  .svc-intro{flex-direction:column; align-items:flex-start; gap:20px; margin-bottom:40px}
+  .svc-grid{grid-template-columns:1fr 1fr}
+
+  /* tech */
+  .tech-categories{grid-template-columns:1fr 1fr; gap:16px}
+
+  /* projects */
+  .pcard-lg,.pcard-sm{grid-column:span 12}
+  .pcard-full{grid-column:span 12; grid-template-columns:1fr}
+
+  /* process */
+  .process-grid{grid-template-columns:1fr 1fr; gap:36px 24px}
+  .process-grid::before{display:none}
+  .pstep{padding:0}
+
+  /* cta */
+  .cta-inner{grid-template-columns:1fr; padding:52px 36px; gap:36px}
+  .cta-right{flex-direction:row; flex-wrap:wrap}
+  .cta-socials{flex-wrap:wrap; gap:14px}
+
+  /* footer */
+  footer{flex-direction:column; gap:10px; text-align:center; padding:24px 20px}
+}
+
+/* ── MOBILE (≤640px) ── */
+@media(max-width:640px){
+  /* nav — hide text links, keep logo + CTA */
+  .nav-links li:not(:last-child){display:none}
+  nav{padding:14px 20px}
+  nav.scrolled{padding:12px 20px}
+
+  /* hero */
+  .hero-left{padding:96px 20px 56px}
+  .hero-eyebrow{font-size:0.68rem; margin-bottom:20px}
+  .hero-p{font-size:0.92rem; margin-top:20px}
+  .hero-btns{flex-direction:column; gap:10px; margin-top:32px}
+  .btn-dark,.btn-ghost{text-align:center; justify-content:center; padding:14px 28px}
+  .hero-divider{gap:24px; padding-top:28px; margin-top:36px}
+  .hd-num{font-size:2.2rem}
+  .hd-label{font-size:0.66rem}
+
+  /* sections */
+  #about,#services,#projects,#contact,#process,#techstack{padding:64px 20px}
+
+  /* about cards */
+  .acard{padding:20px}
+  .acard-icon{width:38px; height:38px; font-size:17px}
+
+  /* services grid → single col */
+  .svc-grid{grid-template-columns:1fr}
+  .svc-item{padding:32px 24px}
+
+  /* tech grid → single col */
+  .tech-categories{grid-template-columns:1fr}
+  .tech-cat{padding:24px 20px}
+
+  /* projects */
+  .proj-header{flex-direction:column; align-items:flex-start; gap:20px}
+  .pcard-visual{padding:36px 20px}
+  .pcard-body{padding:20px}
+  .pv-icon{width:52px; height:52px; font-size:22px}
+
+  /* process → single col */
+  .process-grid{grid-template-columns:1fr; gap:32px}
+  .pstep-dot{width:58px; height:58px; font-size:22px}
+
+  /* cta */
+  .cta-inner{padding:40px 20px; border-radius:20px}
+  .cta-right{flex-direction:column}
+  .btn-green,.btn-ghost-w{padding:14px 28px; text-align:center}
+  .cta-socials{flex-direction:column; gap:10px; align-items:flex-start}
+
+  /* footer */
+  footer{padding:20px}
+  footer .nav-logo{font-size:1.2rem}
+}
+
+/* HAMBURGER */
+.hamburger {
+  display: none;
+  flex-direction: column; justify-content: center; align-items: center;
+  gap: 5px; width: 40px; height: 40px;
+  background: none; border: none; cursor: pointer; padding: 4px; z-index: 600;
+}
+.hamburger span {
+  display: block; width: 22px; height: 2px;
+  background: var(--ink); border-radius: 2px;
+  transition: transform 0.28s ease, opacity 0.2s ease;
+}
+.hamburger.open span:nth-child(1){ transform: translateY(7px) rotate(45deg); }
+.hamburger.open span:nth-child(2){ opacity: 0; }
+.hamburger.open span:nth-child(3){ transform: translateY(-7px) rotate(-45deg); }
+
+/* MOBILE MENU OVERLAY */
+.mobile-menu {
+  display: none;
+  position: fixed; inset: 0; z-index: 499;
+  background: rgba(10,15,10,0.97);
+  flex-direction: column; align-items: center; justify-content: center;
+  gap: 32px;
+}
+.mobile-menu.open { display: flex; }
+.mobile-menu a {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 2.8rem; letter-spacing: 0.06em;
+  color: rgba(255,255,255,0.7); text-decoration: none;
+  transition: color 0.2s;
+}
+.mobile-menu a:hover { color: var(--g1); }
+.mobile-menu .mm-cta {
+  background: linear-gradient(135deg, #00CC6A, var(--g1));
+  color: var(--ink) !important;
+  font-size: 1.3rem; padding: 14px 44px;
+  border-radius: 100px; margin-top: 16px;
+  font-family: 'Cabinet Grotesk', sans-serif;
+  font-weight: 800; letter-spacing: 0.04em;
+}
+
+@media(max-width:640px){
+  .hamburger{ display: flex; }
+  .nav-links{ display: none; }
+  nav.scrolled .hamburger span { background: var(--ink); }
+}
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<!-- NAV -->
+<nav id="nav">
+  <a href="#" class="nav-logo">ThumbStack <span class="logo-dot"></span></a>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="#about">About</a></li>
+    <li><a href="#services">Services</a></li>
+    <li><a href="#techstack">Stack</a></li>
+    <li><a href="#projects">Projects</a></li>
+    <li><a href="#process">Process</a></li>
+    <li><a href="#contact" class="nav-cta-btn">Let's Talk</a></li>
+  </ul>
+  <button class="hamburger" id="hamburger" aria-label="Toggle menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- MOBILE MENU -->
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#about" onclick="closeMenu()">About</a>
+  <a href="#services" onclick="closeMenu()">Services</a>
+  <a href="#techstack" onclick="closeMenu()">Stack</a>
+  <a href="#projects" onclick="closeMenu()">Projects</a>
+  <a href="#process" onclick="closeMenu()">Process</a>
+  <a href="#contact" class="mm-cta" onclick="closeMenu()">Let's Talk →</a>
+</div>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-left">
+    <div class="hero-eyebrow">
+      <span class="eyebrow-line"></span>
+      Open for Projects · 2025
+    </div>
+    <h1 class="hero-h1">
+      BUILD<br>
+      <span class="h1-green">SOLVE</span>
+      SCALE
+    </h1>
+    <p class="hero-p">ThumbStack is a product-focused studio founded in 2025 — turning bold ideas into real-world software using Laravel, WordPress, AWS, and modern frontend stacks. Fast, clean, and built to last.</p>
+    <div class="hero-btns">
+      <a href="#projects" class="btn-dark">View Our Work →</a>
+      <a href="#contact" class="btn-ghost">Get in Touch</a>
+    </div>
+    <div class="hero-divider">
+      <div>
+        <div class="hd-num">2025</div>
+        <div class="hd-label">Founded</div>
+      </div>
+      <div>
+        <div class="hd-num">6+</div>
+        <div class="hd-label">Technologies</div>
+      </div>
+      <div>
+        <div class="hd-num">100%</div>
+        <div class="hd-label">Committed</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="hero-right">
+    <div class="hero-blob"></div>
+
+    <div class="float-card float-card-1">
+      <div class="fc-label">Backend Stack</div>
+      <div class="fc-value">Laravel</div>
+      <div class="fc-pills">
+        <span class="fc-pill">PHP</span>
+        <span class="fc-pill">CodeIgniter</span>
+        <span class="fc-pill">REST API</span>
+      </div>
+    </div>
+
+    <div class="float-card float-card-2">
+      <div class="fc-label">Cloud & Hosting</div>
+      <div class="fc-value">AWS</div>
+      <div class="fc-pills">
+        <span class="fc-pill">Hostinger</span>
+        <span class="fc-pill">EC2</span>
+        <span class="fc-pill">S3</span>
+      </div>
+    </div>
+
+    <div class="float-card float-card-3">
+      <div class="fc-label">Frontend</div>
+      <div class="fc-value">Tailwind</div>
+      <div class="fc-pills">
+        <span class="fc-pill">Bootstrap</span>
+        <span class="fc-pill">MUI</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TICKER -->
+<div class="ticker">
+  <div class="ticker-track">
+    <span class="ticker-item">Laravel <span class="ticker-sep">✦</span></span>
+    <span class="ticker-item">CodeIgniter <span class="ticker-sep">✦</span></span>
+    <span class="ticker-item">WordPress <span class="ticker-sep">✦</span></span>
+    <span class="ticker-item">Elementor <span class="ticker-sep">✦</span></span>
+    <span class="ticker-item">AWS <span class="ticker-sep">✦</span></span>
+    <span class="ticker-item">Hostinger <span class="ticker-sep">✦</span></span>
+    <span class="ticker-item">Bootstrap <span class="ticker-sep">✦</span></span>
+    <span class="ticker-item">Tailwind CSS <span class="ticker-sep">✦</span></span>
+    <span class="ticker-item">MUI <span class="ticker-sep">✦</span></span>
+    <span class="ticker-item">Laravel <span class="ticker-sep">✦</span></span>
+    <span class="ticker-item">CodeIgniter <span class="ticker-sep">✦</span></span>
+    <span class="ticker-item">WordPress <span class="ticker-sep">✦</span></span>
+    <span class="ticker-item">Elementor <span class="ticker-sep">✦</span></span>
+    <span class="ticker-item">AWS <span class="ticker-sep">✦</span></span>
+    <span class="ticker-item">Hostinger <span class="ticker-sep">✦</span></span>
+    <span class="ticker-item">Bootstrap <span class="ticker-sep">✦</span></span>
+    <span class="ticker-item">Tailwind CSS <span class="ticker-sep">✦</span></span>
+    <span class="ticker-item">MUI <span class="ticker-sep">✦</span></span>
+  </div>
+</div>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="about-body reveal">
+    <div class="section-tag">Who We Are</div>
+    <h2 class="section-h2">A studio built<br>for founders.</h2>
+    <p>ThumbStack was founded in 2025 to bridge the gap between great ideas and great software. We're a lean, focused team that moves fast — from zero to deployed, we handle the full stack.</p>
+    <p>We don't just write code. We challenge assumptions, think deeply about your product, and build things that actually solve the problem — using proven technologies trusted by thousands of businesses worldwide.</p>
+  </div>
+  <div class="about-cards reveal d2">
+    <div class="acard">
+      <div class="acard-icon">🎯</div>
+      <div>
+        <div class="acard-title">Product-First Mindset</div>
+        <div class="acard-desc">Every line of code has a user at the end of it. We obsess over the experience first, then engineer the solution.</div>
+      </div>
+    </div>
+    <div class="acard">
+      <div class="acard-icon">⚡</div>
+      <div>
+        <div class="acard-title">Speed Without Sacrifice</div>
+        <div class="acard-desc">Rapid delivery and iterative builds — no shortcuts on code quality or design, ever.</div>
+      </div>
+    </div>
+    <div class="acard">
+      <div class="acard-icon">🔬</div>
+      <div>
+        <div class="acard-title">Deep Technical Roots</div>
+        <div class="acard-desc">Full-stack expertise across Laravel, WordPress, cloud infrastructure, and modern CSS frameworks.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TECH STACK -->
+<section id="techstack">
+  <div class="tech-intro reveal">
+    <div class="section-tag">Our Technologies</div>
+    <h2 class="section-h2">The stack we<br>ship with.</h2>
+  </div>
+  <div class="tech-categories">
+
+    <div class="tech-cat reveal d1">
+      <span class="tech-cat-icon">⚙️</span>
+      <div class="tech-cat-title">Backend Frameworks</div>
+      <div class="tech-badges">
+        <span class="tech-badge tb-backend">Laravel</span>
+        <span class="tech-badge tb-backend">CodeIgniter</span>
+        <span class="tech-badge tb-backend">PHP</span>
+        <span class="tech-badge tb-backend">REST APIs</span>
+        <span class="tech-badge tb-backend">MVC Architecture</span>
+      </div>
+    </div>
+
+    <div class="tech-cat reveal d2">
+      <span class="tech-cat-icon">🌐</span>
+      <div class="tech-cat-title">CMS & Site Builders</div>
+      <div class="tech-badges">
+        <span class="tech-badge tb-cms">WordPress</span>
+        <span class="tech-badge tb-cms">Elementor</span>
+        <span class="tech-badge tb-cms">WooCommerce</span>
+        <span class="tech-badge tb-cms">Custom Themes</span>
+      </div>
+    </div>
+
+    <div class="tech-cat reveal d3">
+      <span class="tech-cat-icon">☁️</span>
+      <div class="tech-cat-title">Cloud & Hosting</div>
+      <div class="tech-badges">
+        <span class="tech-badge tb-cloud">AWS</span>
+        <span class="tech-badge tb-cloud">Hostinger</span>
+        <span class="tech-badge tb-cloud">EC2</span>
+        <span class="tech-badge tb-cloud">S3</span>
+        <span class="tech-badge tb-cloud">RDS</span>
+      </div>
+    </div>
+
+    <div class="tech-cat reveal d1">
+      <span class="tech-cat-icon">🎨</span>
+      <div class="tech-cat-title">Frontend & CSS</div>
+      <div class="tech-badges">
+        <span class="tech-badge tb-frontend">Tailwind CSS</span>
+        <span class="tech-badge tb-frontend">Bootstrap</span>
+        <span class="tech-badge tb-frontend">MUI</span>
+        <span class="tech-badge tb-frontend">Responsive Design</span>
+      </div>
+    </div>
+
+    <div class="tech-cat reveal d2">
+      <span class="tech-cat-icon">🗄️</span>
+      <div class="tech-cat-title">Database & Storage</div>
+      <div class="tech-badges">
+        <span class="tech-badge tb-backend">MySQL</span>
+        <span class="tech-badge tb-backend">PostgreSQL</span>
+        <span class="tech-badge tb-cloud">S3 Storage</span>
+        <span class="tech-badge tb-backend">Eloquent ORM</span>
+      </div>
+    </div>
+
+    <div class="tech-cat reveal d3">
+      <span class="tech-cat-icon">🔧</span>
+      <div class="tech-cat-title">Dev Tools & Workflow</div>
+      <div class="tech-badges">
+        <span class="tech-badge tb-design">Git</span>
+        <span class="tech-badge tb-design">Composer</span>
+        <span class="tech-badge tb-design">npm / Vite</span>
+        <span class="tech-badge tb-design">Linux / cPanel</span>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- SERVICES -->
+<section id="services">
+  <div class="svc-intro reveal">
+    <div>
+      <div class="section-tag">What We Do</div>
+      <h2 class="section-h2">From idea<br>to impact.</h2>
+    </div>
+    <p class="svc-intro-p">Every engagement is tailored. No templates, no packages — just the right solution for your specific challenge.</p>
+  </div>
+  <div class="svc-grid reveal">
+    <div class="svc-item">
+      <div class="svc-n">01</div>
+      <span class="svc-emoji">🏗️</span>
+      <div class="svc-title">Web Application Development</div>
+      <div class="svc-desc">Custom web apps built with Laravel or CodeIgniter — clean architecture, secure backends, and scalable databases from day one.</div>
+    </div>
+    <div class="svc-item">
+      <div class="svc-n">02</div>
+      <span class="svc-emoji">🌐</span>
+      <div class="svc-title">WordPress & CMS Sites</div>
+      <div class="svc-desc">Business websites, blogs, and e-commerce stores powered by WordPress and Elementor — fast to build, easy to manage.</div>
+    </div>
+    <div class="svc-item">
+      <div class="svc-n">03</div>
+      <span class="svc-emoji">🎨</span>
+      <div class="svc-title">UI/UX & Frontend</div>
+      <div class="svc-desc">Pixel-perfect interfaces using Tailwind CSS, Bootstrap, or MUI — responsive, accessible, and crafted for real users.</div>
+    </div>
+    <div class="svc-item">
+      <div class="svc-n">04</div>
+      <span class="svc-emoji">☁️</span>
+      <div class="svc-title">Cloud Deployment</div>
+      <div class="svc-desc">We set up, configure, and manage your app on AWS or Hostinger — from server provisioning to SSL, DNS, and CI/CD pipelines.</div>
+    </div>
+    <div class="svc-item">
+      <div class="svc-n">05</div>
+      <span class="svc-emoji">🔌</span>
+      <div class="svc-title">API & Integrations</div>
+      <div class="svc-desc">Connecting your stack to payment gateways, third-party APIs, and custom automation — built for reliability at scale.</div>
+    </div>
+    <div class="svc-item">
+      <div class="svc-n">06</div>
+      <span class="svc-emoji">🛡️</span>
+      <div class="svc-title">Tech Consulting</div>
+      <div class="svc-desc">Stack decisions, architecture planning, and code reviews for early-stage startups that want to build right the first time.</div>
+    </div>
+  </div>
+</section>
+
+<!-- PROJECTS -->
+<section id="projects">
+  <div class="proj-header reveal">
+    <div>
+      <div class="section-tag">Our Work</div>
+      <h2 class="section-h2">Projects we're building.</h2>
+    </div>
+    <a href="#contact" class="btn-ghost" style="opacity:1;border-color:rgba(0,0,0,0.14)">Work With Us →</a>
+  </div>
+  <div class="proj-grid">
+
+    <!-- FEATURED -->
+    <div class="pcard pcard-full reveal">
+      <div class="pcard-visual">
+        <div class="pv-badge">In Development</div>
+        <div class="pv-icon">🚀</div>
+        <div class="pv-stack">
+          <span class="pv-chip">Laravel</span>
+          <span class="pv-chip">Tailwind</span>
+          <span class="pv-chip">AWS</span>
+          <span class="pv-chip">MySQL</span>
+        </div>
+      </div>
+      <div class="pcard-body">
+        <div class="ptags">
+          <span class="ptag ptag-g">SaaS</span>
+          <span class="ptag">Web App</span>
+          <span class="ptag">2025</span>
+        </div>
+        <div class="pcard-title">Project Alpha — Flagship Product</div>
+        <div class="pcard-desc">Our first flagship SaaS product is under active development. Built on Laravel with AWS infrastructure, Tailwind CSS frontend, and a real-time collaboration layer — designed to help teams ship faster.</div>
+        <div class="pcard-foot">
+          <div class="pstatus"><div class="sdot sdot-yellow"></div> In Development</div>
+          <div class="plink">Case Study Coming ↗</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CARD 2 -->
+    <div class="pcard pcard-lg reveal d1">
+      <div class="pcard-visual">
+        <div class="pv-badge">Upcoming</div>
+        <div class="pv-icon">🛒</div>
+        <div class="pv-stack">
+          <span class="pv-chip">WordPress</span>
+          <span class="pv-chip">WooCommerce</span>
+          <span class="pv-chip">Elementor</span>
+        </div>
+      </div>
+      <div class="pcard-body">
+        <div class="ptags">
+          <span class="ptag ptag-g">E-Commerce</span>
+          <span class="ptag">WordPress</span>
+        </div>
+        <div class="pcard-title">Client E-Commerce Store — TBA</div>
+        <div class="pcard-desc">A fully customized WooCommerce store with Elementor-built product pages, payment gateway integration, and hosted on Hostinger for optimal PHP performance.</div>
+        <div class="pcard-foot">
+          <div class="pstatus"><div class="sdot sdot-gray"></div> Planned</div>
+          <div class="plink">Case Study Soon ↗</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CARD 3 -->
+    <div class="pcard pcard-sm reveal d2">
+      <div class="pcard-visual">
+        <div class="pv-badge">Upcoming</div>
+        <div class="pv-icon">📊</div>
+        <div class="pv-stack">
+          <span class="pv-chip">CodeIgniter</span>
+          <span class="pv-chip">Bootstrap</span>
+          <span class="pv-chip">MySQL</span>
+        </div>
+      </div>
+      <div class="pcard-body">
+        <div class="ptags">
+          <span class="ptag ptag-g">Dashboard</span>
+        </div>
+        <div class="pcard-title">Admin Portal — TBA</div>
+        <div class="pcard-desc">A data management portal built with CodeIgniter and Bootstrap.</div>
+        <div class="pcard-foot">
+          <div class="pstatus"><div class="sdot sdot-gray"></div> Planned</div>
+          <div class="plink">Soon ↗</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- PROCESS -->
+<section id="process">
+  <div class="reveal">
+    <div class="section-tag">How We Work</div>
+    <h2 class="section-h2">Our process.<br>Every time.</h2>
+  </div>
+  <div class="process-grid">
+    <div class="pstep reveal d1">
+      <div class="pstep-dot">🎯</div>
+      <div class="pstep-num">STEP 01</div>
+      <div class="pstep-title">Discover</div>
+      <div class="pstep-desc">Deep conversations and research — we understand the real problem, define the right stack, and scope the work before writing a single line.</div>
+    </div>
+    <div class="pstep reveal d2">
+      <div class="pstep-dot">📐</div>
+      <div class="pstep-num">STEP 02</div>
+      <div class="pstep-title">Design</div>
+      <div class="pstep-desc">Architecture diagrams, wireframes, and database schemas — all mapped out with precision using the right tools for your project.</div>
+    </div>
+    <div class="pstep reveal d3">
+      <div class="pstep-dot">⚙️</div>
+      <div class="pstep-num">STEP 03</div>
+      <div class="pstep-title">Build</div>
+      <div class="pstep-desc">Iterative development with weekly builds and real feedback — Laravel or CodeIgniter backends, Tailwind or Bootstrap frontends, deployed on AWS or Hostinger.</div>
+    </div>
+    <div class="pstep reveal d4">
+      <div class="pstep-dot">🚀</div>
+      <div class="pstep-num">STEP 04</div>
+      <div class="pstep-title">Launch & Scale</div>
+      <div class="pstep-desc">We handle deployment, monitoring, and optimization — then grow with you through every stage after launch.</div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="cta-inner reveal">
+    <div class="cta-blob"></div>
+    <div class="cta-blob2"></div>
+    <div>
+      <div class="cta-tag">✦ Let's Work Together</div>
+      <h2 class="cta-h2">Have an idea?<br>Let's build it.</h2>
+      <p class="cta-p">We're a new studio in 2025 — selective about the projects we take on, and fully committed when we do. Whether it's a Laravel web app, a WordPress site, or a cloud deployment, tell us what you're building.</p>
+      <div class="cta-socials">
+        <a href="#">LinkedIn</a>
+        <a href="#">GitHub</a>
+        <a href="mailto:hello@thumbstack.com">hello@thumbstack.com</a>
+      </div>
+    </div>
+    <div class="cta-right">
+      <a href="mailto:hello@thumbstack.com" class="btn-green">Start a Project</a>
+      <a href="#projects" class="btn-ghost-w">View Our Work</a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <a href="#" class="nav-logo">ThumbStack <span class="logo-dot"></span></a>
+  <span>Build, Solve, Scale · © 2025 ThumbStack</span>
+  <span>Founded with precision ✦</span>
+</footer>
+
+<script>
+// Custom cursor — desktop only
+const isTouchDevice = () => window.matchMedia('(hover: none)').matches;
+const cur = document.getElementById('cursor');
+const ring = document.getElementById('cursorRing');
+let mx = 0, my = 0, rx = 0, ry = 0;
+if (!isTouchDevice()) {
+  document.body.style.cursor = 'none';
+  document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
+  function animCursor() {
+    cur.style.left = mx + 'px'; cur.style.top = my + 'px';
+    rx += (mx - rx) * 0.12; ry += (my - ry) * 0.12;
+    ring.style.left = rx + 'px'; ring.style.top = ry + 'px';
+    requestAnimationFrame(animCursor);
+  }
+  animCursor();
+  document.querySelectorAll('a, button').forEach(el => {
+    el.addEventListener('mouseenter', () => {
+      cur.style.width = '18px'; cur.style.height = '18px';
+      ring.style.width = '54px'; ring.style.height = '54px'; ring.style.opacity = '0.8';
+    });
+    el.addEventListener('mouseleave', () => {
+      cur.style.width = '10px'; cur.style.height = '10px';
+      ring.style.width = '36px'; ring.style.height = '36px'; ring.style.opacity = '0.5';
+    });
+  });
+} else {
+  cur.style.display = 'none';
+  ring.style.display = 'none';
+  document.body.style.cursor = 'auto';
+}
+
+// Nav scroll
+const nav = document.getElementById('nav');
+window.addEventListener('scroll', () => { nav.classList.toggle('scrolled', window.scrollY > 40); });
+
+// Hamburger menu
+const hamburger = document.getElementById('hamburger');
+const mobileMenu = document.getElementById('mobileMenu');
+function toggleMenu() {
+  hamburger.classList.toggle('open');
+  mobileMenu.classList.toggle('open');
+  document.body.style.overflow = mobileMenu.classList.contains('open') ? 'hidden' : '';
+}
+function closeMenu() {
+  hamburger.classList.remove('open');
+  mobileMenu.classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+// Scroll reveal
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('up'); });
+}, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+</script>
+</body>
+</html>
