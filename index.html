@@ -294,57 +294,77 @@ nav.scrolled {
 
 /* TECH STACK SECTION */
 #techstack {
-  background: var(--offwhite);
+  background: var(--ink);
   padding: 100px 64px;
 }
-.tech-intro { margin-bottom: 56px; }
-.tech-categories {
+#techstack .section-tag { color: var(--g1); }
+#techstack .section-tag::after { background: linear-gradient(90deg, var(--g1), transparent); }
+#techstack .section-h2 { color: var(--white); }
+.tech-header {
+  display: flex; justify-content: space-between; align-items: flex-end;
+  margin-bottom: 72px;
+}
+.tech-header-right {
+  font-size: 0.85rem; color: rgba(255,255,255,0.3);
+  max-width: 220px; line-height: 1.6; text-align: right;
+}
+.tech-rows { display: flex; flex-direction: column; }
+.tech-row {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 20px;
+  grid-template-columns: 180px 1fr;
+  align-items: start;
+  padding: 32px 0;
+  border-top: 1px solid rgba(255,255,255,0.07);
+  gap: 48px;
+  transition: background 0.2s;
 }
-.tech-cat {
-  background: var(--white);
-  border-radius: 20px;
-  padding: 36px 32px;
-  border: 1.5px solid var(--border);
-  transition: border-color 0.25s, transform 0.25s, box-shadow 0.25s;
+.tech-row:last-child { border-bottom: 1px solid rgba(255,255,255,0.07); }
+.tech-row-label {
+  font-size: 0.65rem; font-weight: 700;
+  letter-spacing: 0.22em; text-transform: uppercase;
+  color: rgba(255,255,255,0.25);
+  padding-top: 4px;
 }
-.tech-cat:hover {
-  border-color: rgba(0,255,135,0.4);
-  transform: translateY(-4px);
-  box-shadow: 0 16px 40px rgba(0,0,0,0.08);
+.tech-row-items {
+  display: flex; flex-wrap: wrap; gap: 10px; align-items: center;
 }
-.tech-cat-icon {
-  font-size: 28px; margin-bottom: 16px; display: block;
+.tech-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 18px;
+  border: 1px solid rgba(255,255,255,0.09);
+  border-radius: 10px;
+  background: rgba(255,255,255,0.03);
+  transition: border-color 0.2s, background 0.2s, transform 0.2s;
+  cursor: default;
 }
-.tech-cat-title {
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: 1.1rem; letter-spacing: 0.08em;
-  color: var(--ink); margin-bottom: 18px;
+.tech-item:hover {
+  border-color: rgba(0,255,135,0.35);
+  background: rgba(0,255,135,0.04);
+  transform: translateY(-2px);
 }
-.tech-badges { display: flex; flex-wrap: wrap; gap: 8px; }
-.tech-badge {
-  font-size: 0.72rem; font-weight: 700;
-  letter-spacing: 0.06em; text-transform: uppercase;
-  padding: 6px 14px; border-radius: 8px;
-  transition: all 0.2s;
+.tech-item-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  flex-shrink: 0;
 }
-/* backend */
-.tb-backend { background: rgba(0,200,80,0.08); color: #00883A; border: 1.5px solid rgba(0,200,80,0.2); }
-.tb-backend:hover { background: rgba(0,200,80,0.16); }
-/* cms */
-.tb-cms { background: rgba(33,150,243,0.08); color: #1565C0; border: 1.5px solid rgba(33,150,243,0.18); }
-.tb-cms:hover { background: rgba(33,150,243,0.16); }
-/* cloud */
-.tb-cloud { background: rgba(255,153,0,0.08); color: #B45309; border: 1.5px solid rgba(255,153,0,0.22); }
-.tb-cloud:hover { background: rgba(255,153,0,0.16); }
-/* frontend */
-.tb-frontend { background: rgba(139,92,246,0.08); color: #6D28D9; border: 1.5px solid rgba(139,92,246,0.18); }
-.tb-frontend:hover { background: rgba(139,92,246,0.16); }
-/* design */
-.tb-design { background: rgba(236,72,153,0.08); color: #9D174D; border: 1.5px solid rgba(236,72,153,0.18); }
-.tb-design:hover { background: rgba(236,72,153,0.16); }
+.td-green  { background: #00FF87; }
+.td-blue   { background: #60A5FA; }
+.td-orange { background: #FB923C; }
+.td-purple { background: #A78BFA; }
+.td-yellow { background: #FACC15; }
+.tech-item-name {
+  font-family: 'Cabinet Grotesk', sans-serif;
+  font-size: 0.88rem; font-weight: 700;
+  color: rgba(255,255,255,0.82);
+  letter-spacing: 0.01em; white-space: nowrap;
+}
+.tech-item-tag {
+  font-size: 0.58rem; font-weight: 700;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--g1); opacity: 0.6;
+  background: rgba(0,255,135,0.07);
+  padding: 2px 7px; border-radius: 4px;
+  white-space: nowrap;
+}
 
 /* SERVICES */
 #services { background: var(--ink); padding: 120px 64px; }
@@ -550,7 +570,9 @@ footer span { font-size: 0.8rem; color: rgba(255,255,255,0.28); }
   .svc-grid{grid-template-columns:1fr 1fr}
 
   /* tech */
-  .tech-categories{grid-template-columns:1fr 1fr; gap:16px}
+  .tech-row{grid-template-columns:120px 1fr; gap:24px; padding:24px 0}
+  .tech-header{flex-direction:column; align-items:flex-start; gap:12px}
+  .tech-header-right{text-align:left}
 
   /* projects */
   .pcard-lg,.pcard-sm{grid-column:span 12}
@@ -599,7 +621,8 @@ footer span { font-size: 0.8rem; color: rgba(255,255,255,0.28); }
   .svc-item{padding:32px 24px}
 
   /* tech grid → single col */
-  .tech-categories{grid-template-columns:1fr}
+  .tech-row{grid-template-columns:1fr; gap:14px; padding:20px 0}
+  .tech-row-label{padding-top:0}
   .tech-cat{padding:24px 20px}
 
   /* projects */
@@ -828,77 +851,135 @@ footer span { font-size: 0.8rem; color: rgba(255,255,255,0.28); }
 
 <!-- TECH STACK -->
 <section id="techstack">
-  <div class="tech-intro reveal">
-    <div class="section-tag">Our Technologies</div>
-    <h2 class="section-h2">The stack we<br>ship with.</h2>
+  <div class="tech-header reveal">
+    <div>
+      <div class="section-tag">Our Technologies</div>
+      <h2 class="section-h2">The stack we<br>ship with.</h2>
+    </div>
+    <div class="tech-header-right">Tools we know deeply — not just tools we list on a resume.</div>
   </div>
-  <div class="tech-categories">
 
-    <div class="tech-cat reveal d1">
-      <span class="tech-cat-icon">⚙️</span>
-      <div class="tech-cat-title">Backend Frameworks</div>
-      <div class="tech-badges">
-        <span class="tech-badge tb-backend">Laravel</span>
-        <span class="tech-badge tb-backend">CodeIgniter</span>
-        <span class="tech-badge tb-backend">PHP</span>
-        <span class="tech-badge tb-backend">REST APIs</span>
-        <span class="tech-badge tb-backend">MVC Architecture</span>
+  <div class="tech-rows">
+
+    <div class="tech-row reveal">
+      <div class="tech-row-label">Backend</div>
+      <div class="tech-row-items">
+        <div class="tech-item">
+          <div class="tech-item-dot td-green"></div>
+          <span class="tech-item-name">Laravel</span>
+          <span class="tech-item-tag">Primary</span>
+        </div>
+        <div class="tech-item">
+          <div class="tech-item-dot td-green"></div>
+          <span class="tech-item-name">CodeIgniter</span>
+        </div>
+        <div class="tech-item">
+          <div class="tech-item-dot td-green"></div>
+          <span class="tech-item-name">PHP</span>
+        </div>
+        <div class="tech-item">
+          <div class="tech-item-dot td-green"></div>
+          <span class="tech-item-name">REST APIs</span>
+        </div>
+        <div class="tech-item">
+          <div class="tech-item-dot td-green"></div>
+          <span class="tech-item-name">Eloquent ORM</span>
+        </div>
       </div>
     </div>
 
-    <div class="tech-cat reveal d2">
-      <span class="tech-cat-icon">🌐</span>
-      <div class="tech-cat-title">CMS & Site Builders</div>
-      <div class="tech-badges">
-        <span class="tech-badge tb-cms">WordPress</span>
-        <span class="tech-badge tb-cms">Elementor</span>
-        <span class="tech-badge tb-cms">WooCommerce</span>
-        <span class="tech-badge tb-cms">Custom Themes</span>
+    <div class="tech-row reveal d1">
+      <div class="tech-row-label">CMS</div>
+      <div class="tech-row-items">
+        <div class="tech-item">
+          <div class="tech-item-dot td-blue"></div>
+          <span class="tech-item-name">WordPress</span>
+          <span class="tech-item-tag">Primary</span>
+        </div>
+        <div class="tech-item">
+          <div class="tech-item-dot td-blue"></div>
+          <span class="tech-item-name">Elementor</span>
+        </div>
+        <div class="tech-item">
+          <div class="tech-item-dot td-blue"></div>
+          <span class="tech-item-name">WooCommerce</span>
+        </div>
+        <div class="tech-item">
+          <div class="tech-item-dot td-blue"></div>
+          <span class="tech-item-name">Custom Themes</span>
+        </div>
       </div>
     </div>
 
-    <div class="tech-cat reveal d3">
-      <span class="tech-cat-icon">☁️</span>
-      <div class="tech-cat-title">Cloud & Hosting</div>
-      <div class="tech-badges">
-        <span class="tech-badge tb-cloud">AWS</span>
-        <span class="tech-badge tb-cloud">Hostinger</span>
-        <span class="tech-badge tb-cloud">EC2</span>
-        <span class="tech-badge tb-cloud">S3</span>
-        <span class="tech-badge tb-cloud">RDS</span>
+    <div class="tech-row reveal d2">
+      <div class="tech-row-label">Frontend</div>
+      <div class="tech-row-items">
+        <div class="tech-item">
+          <div class="tech-item-dot td-purple"></div>
+          <span class="tech-item-name">Tailwind CSS</span>
+          <span class="tech-item-tag">Primary</span>
+        </div>
+        <div class="tech-item">
+          <div class="tech-item-dot td-purple"></div>
+          <span class="tech-item-name">Bootstrap</span>
+        </div>
+        <div class="tech-item">
+          <div class="tech-item-dot td-purple"></div>
+          <span class="tech-item-name">MUI</span>
+        </div>
+        <div class="tech-item">
+          <div class="tech-item-dot td-purple"></div>
+          <span class="tech-item-name">Blade Templates</span>
+        </div>
       </div>
     </div>
 
-    <div class="tech-cat reveal d1">
-      <span class="tech-cat-icon">🎨</span>
-      <div class="tech-cat-title">Frontend & CSS</div>
-      <div class="tech-badges">
-        <span class="tech-badge tb-frontend">Tailwind CSS</span>
-        <span class="tech-badge tb-frontend">Bootstrap</span>
-        <span class="tech-badge tb-frontend">MUI</span>
-        <span class="tech-badge tb-frontend">Responsive Design</span>
+    <div class="tech-row reveal d3">
+      <div class="tech-row-label">Cloud & Infra</div>
+      <div class="tech-row-items">
+        <div class="tech-item">
+          <div class="tech-item-dot td-orange"></div>
+          <span class="tech-item-name">AWS</span>
+          <span class="tech-item-tag">Primary</span>
+        </div>
+        <div class="tech-item">
+          <div class="tech-item-dot td-orange"></div>
+          <span class="tech-item-name">Hostinger</span>
+        </div>
+        <div class="tech-item">
+          <div class="tech-item-dot td-orange"></div>
+          <span class="tech-item-name">EC2 / S3</span>
+        </div>
+        <div class="tech-item">
+          <div class="tech-item-dot td-orange"></div>
+          <span class="tech-item-name">RDS / MySQL</span>
+        </div>
+        <div class="tech-item">
+          <div class="tech-item-dot td-orange"></div>
+          <span class="tech-item-name">Linux / cPanel</span>
+        </div>
       </div>
     </div>
 
-    <div class="tech-cat reveal d2">
-      <span class="tech-cat-icon">🗄️</span>
-      <div class="tech-cat-title">Database & Storage</div>
-      <div class="tech-badges">
-        <span class="tech-badge tb-backend">MySQL</span>
-        <span class="tech-badge tb-backend">PostgreSQL</span>
-        <span class="tech-badge tb-cloud">S3 Storage</span>
-        <span class="tech-badge tb-backend">Eloquent ORM</span>
-      </div>
-    </div>
-
-    <div class="tech-cat reveal d3">
-      <span class="tech-cat-icon">🔧</span>
-      <div class="tech-cat-title">Dev Tools & Workflow</div>
-      <div class="tech-badges">
-        <span class="tech-badge tb-design">Git</span>
-        <span class="tech-badge tb-design">Composer</span>
-        <span class="tech-badge tb-design">npm / Vite</span>
-        <span class="tech-badge tb-design">Linux / cPanel</span>
+    <div class="tech-row reveal d4">
+      <div class="tech-row-label">Dev Workflow</div>
+      <div class="tech-row-items">
+        <div class="tech-item">
+          <div class="tech-item-dot td-yellow"></div>
+          <span class="tech-item-name">Git / GitHub</span>
+        </div>
+        <div class="tech-item">
+          <div class="tech-item-dot td-yellow"></div>
+          <span class="tech-item-name">Composer</span>
+        </div>
+        <div class="tech-item">
+          <div class="tech-item-dot td-yellow"></div>
+          <span class="tech-item-name">npm / Vite</span>
+        </div>
+        <div class="tech-item">
+          <div class="tech-item-dot td-yellow"></div>
+          <span class="tech-item-name">PostgreSQL</span>
+        </div>
       </div>
     </div>
 
