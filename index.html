@@ -650,14 +650,19 @@ footer span { font-size: 0.8rem; color: rgba(255,255,255,0.28); }
 .hamburger {
   display: none;
   flex-direction: column; justify-content: center; align-items: center;
-  gap: 5px; width: 40px; height: 40px;
-  background: none; border: none; cursor: pointer; padding: 4px; z-index: 600;
+  gap: 5px; width: 44px; height: 44px;
+  background: none; border: none; cursor: pointer; padding: 6px;
+  position: relative; z-index: 9999;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
 }
 .hamburger span {
   display: block; width: 22px; height: 2px;
   background: var(--ink); border-radius: 2px;
   transition: transform 0.28s ease, opacity 0.2s ease;
+  pointer-events: none;
 }
+.hamburger.open span { background: #fff; }
 .hamburger.open span:nth-child(1){ transform: translateY(7px) rotate(45deg); }
 .hamburger.open span:nth-child(2){ opacity: 0; }
 .hamburger.open span:nth-child(3){ transform: translateY(-7px) rotate(-45deg); }
@@ -665,7 +670,7 @@ footer span { font-size: 0.8rem; color: rgba(255,255,255,0.28); }
 /* MOBILE MENU OVERLAY */
 .mobile-menu {
   display: none;
-  position: fixed; inset: 0; z-index: 499;
+  position: fixed; inset: 0; z-index: 9000;
   background: rgba(10,15,10,0.97);
   flex-direction: column; align-items: center; justify-content: center;
   gap: 32px;
@@ -677,7 +682,7 @@ footer span { font-size: 0.8rem; color: rgba(255,255,255,0.28); }
   color: rgba(255,255,255,0.7); text-decoration: none;
   transition: color 0.2s;
 }
-.mobile-menu a:hover { color: var(--g1); }
+.mobile-menu a:hover, .mobile-menu a:active { color: var(--g1); }
 .mobile-menu .mm-cta {
   background: linear-gradient(135deg, #00CC6A, var(--g1));
   color: var(--ink) !important;
@@ -689,8 +694,98 @@ footer span { font-size: 0.8rem; color: rgba(255,255,255,0.28); }
 
 @media(max-width:640px){
   .hamburger{ display: flex; }
-  .nav-links{ display: none; }
-  nav.scrolled .hamburger span { background: var(--ink); }
+  .nav-links{ display: none !important; }
+  nav{ z-index: 9999; }
+}
+
+/* PROJECT MODAL */
+.pmodal-overlay {
+  display: none;
+  position: fixed; inset: 0; z-index: 10000;
+  background: rgba(0,0,0,0.72);
+  backdrop-filter: blur(6px);
+  align-items: center; justify-content: center;
+  padding: 20px;
+}
+.pmodal-overlay.open { display: flex; }
+.pmodal {
+  background: #fff;
+  border-radius: 24px;
+  padding: 48px;
+  width: 100%; max-width: 580px;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+  animation: modalIn 0.32s cubic-bezier(0.34,1.56,0.64,1) forwards;
+}
+@keyframes modalIn {
+  from { opacity:0; transform:translateY(32px) scale(0.97); }
+  to   { opacity:1; transform:translateY(0) scale(1); }
+}
+.pmodal-close {
+  position: absolute; top: 20px; right: 20px;
+  width: 36px; height: 36px; border-radius: 50%;
+  background: #f0f0f0; border: none; cursor: pointer;
+  font-size: 14px; color: #666;
+  display: flex; align-items: center; justify-content: center;
+  transition: background 0.2s, color 0.2s;
+  touch-action: manipulation;
+}
+.pmodal-close:hover { background: var(--ink); color: #fff; }
+.pmodal-tag {
+  font-size: 0.68rem; font-weight: 700; letter-spacing: 0.2em;
+  text-transform: uppercase; color: #00AA58; margin-bottom: 14px;
+}
+.pmodal-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 2.6rem; letter-spacing: 0.02em; line-height: 1.0;
+  color: var(--ink); margin-bottom: 10px;
+}
+.pmodal-sub {
+  font-size: 0.88rem; color: var(--muted); line-height: 1.65;
+  margin-bottom: 28px;
+}
+.pmodal-form { display: flex; flex-direction: column; gap: 16px; }
+.pf-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.pf-group { display: flex; flex-direction: column; gap: 7px; }
+.pf-label {
+  font-size: 0.72rem; font-weight: 700; letter-spacing: 0.1em;
+  text-transform: uppercase; color: var(--muted);
+}
+.pf-input {
+  font-family: 'Cabinet Grotesk', sans-serif;
+  font-size: 0.92rem; font-weight: 500;
+  color: var(--ink); background: #F5F7F2;
+  border: 1.5px solid transparent; border-radius: 10px;
+  padding: 12px 16px; outline: none; width: 100%;
+  transition: border-color 0.2s, background 0.2s;
+  appearance: none; -webkit-appearance: none;
+}
+.pf-input:focus { border-color: var(--g1); background: #fff; }
+.pf-input::placeholder { color: #aaa; }
+.pf-select { cursor: pointer; }
+.pf-textarea { resize: vertical; min-height: 100px; }
+.pf-submit {
+  background: linear-gradient(135deg, #00CC6A, var(--g1));
+  color: var(--ink); border: none; cursor: pointer;
+  font-family: 'Cabinet Grotesk', sans-serif;
+  font-weight: 800; font-size: 0.95rem;
+  padding: 16px 32px; border-radius: 100px;
+  margin-top: 4px; letter-spacing: 0.02em;
+  transition: transform 0.2s, box-shadow 0.2s;
+  box-shadow: 0 8px 24px rgba(0,200,100,0.25);
+  touch-action: manipulation;
+}
+.pf-submit:hover { transform: translateY(-2px); box-shadow: 0 14px 32px rgba(0,200,100,0.35); }
+.pf-note {
+  font-size: 0.75rem; color: var(--muted); text-align: center;
+  line-height: 1.5; margin-top: 4px;
+}
+.pf-note strong { color: var(--ink); }
+@media(max-width:560px){
+  .pmodal{ padding: 32px 22px; border-radius: 18px; }
+  .pmodal-title{ font-size: 2rem; }
+  .pf-row{ grid-template-columns: 1fr; }
 }
 </style>
 </head>
@@ -717,12 +812,12 @@ footer span { font-size: 0.8rem; color: rgba(255,255,255,0.28); }
 
 <!-- MOBILE MENU -->
 <div class="mobile-menu" id="mobileMenu">
-  <a href="#about" onclick="closeMenu()">About</a>
-  <a href="#services" onclick="closeMenu()">Services</a>
-  <a href="#techstack" onclick="closeMenu()">Stack</a>
-  <a href="#projects" onclick="closeMenu()">Projects</a>
-  <a href="#process" onclick="closeMenu()">Process</a>
-  <a href="#contact" class="mm-cta" onclick="closeMenu()">Let's Talk →</a>
+  <a href="#about" class="mm-link">About</a>
+  <a href="#services" class="mm-link">Services</a>
+  <a href="#techstack" class="mm-link">Stack</a>
+  <a href="#projects" class="mm-link">Projects</a>
+  <a href="#process" class="mm-link">Process</a>
+  <a href="#contact" class="mm-cta mm-link">Let's Talk →</a>
 </div>
 
 <!-- HERO -->
@@ -850,7 +945,7 @@ footer span { font-size: 0.8rem; color: rgba(255,255,255,0.28); }
 </section>
 
 <!-- TECH STACK -->
-<!-- <section id="techstack">
+<section id="techstack">
   <div class="tech-header reveal">
     <div>
       <div class="section-tag">Our Technologies</div>
@@ -984,7 +1079,7 @@ footer span { font-size: 0.8rem; color: rgba(255,255,255,0.28); }
     </div>
 
   </div>
-</section> -->
+</section>
 
 <!-- SERVICES -->
 <section id="services">
@@ -1175,11 +1270,65 @@ footer span { font-size: 0.8rem; color: rgba(255,255,255,0.28); }
       </div>
     </div>
     <div class="cta-right">
-      <a href="mailto:hello@thumbstack.com" class="btn-green">Start a Project</a>
+      <button class="btn-green" id="openProjectModal" style="cursor:pointer;border:none;font-family:'Cabinet Grotesk',sans-serif;">Start a Project</button>
       <a href="#projects" class="btn-ghost-w">View Our Work</a>
     </div>
   </div>
 </section>
+
+<!-- PROJECT MODAL -->
+<div class="pmodal-overlay" id="projectModal">
+  <div class="pmodal">
+    <button class="pmodal-close" id="closeProjectModal">&#10005;</button>
+    <div class="pmodal-tag">✦ New Project</div>
+    <h2 class="pmodal-title">Tell us what<br>you're building.</h2>
+    <p class="pmodal-sub">Fill this out and we'll open your email app with everything pre-written — just hit send.</p>
+    <div class="pmodal-form">
+      <div class="pf-row">
+        <div class="pf-group">
+          <label class="pf-label" for="pf-name">Your Name</label>
+          <input class="pf-input" id="pf-name" type="text" placeholder="Juan dela Cruz" />
+        </div>
+        <div class="pf-group">
+          <label class="pf-label" for="pf-email">Your Email</label>
+          <input class="pf-input" id="pf-email" type="email" placeholder="you@company.com" />
+        </div>
+      </div>
+      <div class="pf-group">
+        <label class="pf-label" for="pf-project">Project Type</label>
+        <select class="pf-input pf-select" id="pf-project">
+          <option value="">Select a type...</option>
+          <option>Web App — Laravel / CodeIgniter</option>
+          <option>WordPress / Elementor Site</option>
+          <option>E-Commerce — WooCommerce</option>
+          <option>UI/UX Design + Frontend</option>
+          <option>Cloud Setup — AWS / Hostinger</option>
+          <option>API Integration</option>
+          <option>Tech Consulting</option>
+          <option>Other / Not sure yet</option>
+        </select>
+      </div>
+      <div class="pf-group">
+        <label class="pf-label" for="pf-budget">Estimated Budget</label>
+        <select class="pf-input pf-select" id="pf-budget">
+          <option value="">Select a range...</option>
+          <option>Under $500</option>
+          <option>$500 – $1,000</option>
+          <option>$1,000 – $3,000</option>
+          <option>$3,000 – $10,000</option>
+          <option>$10,000+</option>
+          <option>Let's discuss</option>
+        </select>
+      </div>
+      <div class="pf-group">
+        <label class="pf-label" for="pf-message">What are you building?</label>
+        <textarea class="pf-input pf-textarea" id="pf-message" rows="4" placeholder="Describe your project, goals, timeline, or anything else we should know..."></textarea>
+      </div>
+      <button class="pf-submit" id="pfSubmit">Open Email Client →</button>
+      <p class="pf-note">Opens your email app pre-filled — send to <strong>hello@thumbstack.com</strong></p>
+    </div>
+  </div>
+</div>
 
 <!-- FOOTER -->
 <footer>
@@ -1189,27 +1338,47 @@ footer span { font-size: 0.8rem; color: rgba(255,255,255,0.28); }
 </footer>
 
 <script>
-// Custom cursor — desktop only
-const isTouchDevice = () => window.matchMedia('(hover: none)').matches;
-const cur = document.getElementById('cursor');
-const ring = document.getElementById('cursorRing');
-let mx = 0, my = 0, rx = 0, ry = 0;
-if (!isTouchDevice()) {
+// ── HAMBURGER MENU ──
+var hamburger = document.getElementById('hamburger');
+var mobileMenu = document.getElementById('mobileMenu');
+
+function openMenu() {
+  hamburger.classList.add('open');
+  mobileMenu.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeMenu() {
+  hamburger.classList.remove('open');
+  mobileMenu.classList.remove('open');
+  document.body.style.overflow = '';
+}
+hamburger.addEventListener('click', function(e) {
+  e.stopPropagation();
+  mobileMenu.classList.contains('open') ? closeMenu() : openMenu();
+});
+document.querySelectorAll('.mm-link').forEach(function(link) {
+  link.addEventListener('click', closeMenu);
+});
+
+// ── CUSTOM CURSOR (desktop only) ──
+var cur = document.getElementById('cursor');
+var ring = document.getElementById('cursorRing');
+var mx = 0, my = 0, rx = 0, ry = 0;
+if (!window.matchMedia('(hover: none)').matches) {
   document.body.style.cursor = 'none';
-  document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
-  function animCursor() {
+  document.addEventListener('mousemove', function(e) { mx = e.clientX; my = e.clientY; });
+  (function animCursor() {
     cur.style.left = mx + 'px'; cur.style.top = my + 'px';
     rx += (mx - rx) * 0.12; ry += (my - ry) * 0.12;
     ring.style.left = rx + 'px'; ring.style.top = ry + 'px';
     requestAnimationFrame(animCursor);
-  }
-  animCursor();
-  document.querySelectorAll('a, button').forEach(el => {
-    el.addEventListener('mouseenter', () => {
+  })();
+  document.querySelectorAll('a, button').forEach(function(el) {
+    el.addEventListener('mouseenter', function() {
       cur.style.width = '18px'; cur.style.height = '18px';
       ring.style.width = '54px'; ring.style.height = '54px'; ring.style.opacity = '0.8';
     });
-    el.addEventListener('mouseleave', () => {
+    el.addEventListener('mouseleave', function() {
       cur.style.width = '10px'; cur.style.height = '10px';
       ring.style.width = '36px'; ring.style.height = '36px'; ring.style.opacity = '0.5';
     });
@@ -1217,32 +1386,70 @@ if (!isTouchDevice()) {
 } else {
   cur.style.display = 'none';
   ring.style.display = 'none';
-  document.body.style.cursor = 'auto';
 }
 
-// Nav scroll
-const nav = document.getElementById('nav');
-window.addEventListener('scroll', () => { nav.classList.toggle('scrolled', window.scrollY > 40); });
+// ── NAV SCROLL ──
+var nav = document.getElementById('nav');
+window.addEventListener('scroll', function() {
+  nav.classList.toggle('scrolled', window.scrollY > 40);
+});
 
-// Hamburger menu
-const hamburger = document.getElementById('hamburger');
-const mobileMenu = document.getElementById('mobileMenu');
-function toggleMenu() {
-  hamburger.classList.toggle('open');
-  mobileMenu.classList.toggle('open');
-  document.body.style.overflow = mobileMenu.classList.contains('open') ? 'hidden' : '';
+// ── SCROLL REVEAL ──
+var obs = new IntersectionObserver(function(entries) {
+  entries.forEach(function(e) { if (e.isIntersecting) e.target.classList.add('up'); });
+}, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+document.querySelectorAll('.reveal').forEach(function(el) { obs.observe(el); });
+
+// ── PROJECT MODAL ──
+var projectModal = document.getElementById('projectModal');
+var openBtn      = document.getElementById('openProjectModal');
+var closeBtn     = document.getElementById('closeProjectModal');
+
+function openProjectModal() {
+  projectModal.classList.add('open');
+  document.body.style.overflow = 'hidden';
 }
-function closeMenu() {
-  hamburger.classList.remove('open');
-  mobileMenu.classList.remove('open');
+function closeProjectModal() {
+  projectModal.classList.remove('open');
   document.body.style.overflow = '';
 }
 
-// Scroll reveal
-const obs = new IntersectionObserver(entries => {
-  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('up'); });
-}, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
-document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+openBtn.addEventListener('click', openProjectModal);
+closeBtn.addEventListener('click', closeProjectModal);
+projectModal.addEventListener('click', function(e) {
+  if (e.target === projectModal) closeProjectModal();
+});
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') closeProjectModal();
+});
+
+// ── SEND EMAIL ──
+document.getElementById('pfSubmit').addEventListener('click', function() {
+  var name    = document.getElementById('pf-name').value.trim();
+  var email   = document.getElementById('pf-email').value.trim();
+  var project = document.getElementById('pf-project').value;
+  var budget  = document.getElementById('pf-budget').value;
+  var message = document.getElementById('pf-message').value.trim();
+
+  if (!name || !email) {
+    alert('Please enter your name and email so we know who to reply to.');
+    return;
+  }
+
+  var subject = 'Project Inquiry' + (project ? ' \u2014 ' + project : '');
+  var body = 'Hi ThumbStack,\n\n'
+    + 'My name is ' + name + ' and I would like to start a project with you.\n\n'
+    + 'PROJECT TYPE\n' + (project || 'Not specified') + '\n\n'
+    + 'BUDGET\n' + (budget || 'Not specified') + '\n\n'
+    + 'ABOUT THE PROJECT\n' + (message || 'No details provided yet.') + '\n\n'
+    + 'REPLY TO\n' + email + '\n\n'
+    + 'Looking forward to hearing from you!\n'
+    + name;
+
+  window.location.href = 'mailto:hello@thumbstack.com'
+    + '?subject=' + encodeURIComponent(subject)
+    + '&body='    + encodeURIComponent(body);
+});
 </script>
 </body>
 </html>
