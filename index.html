@@ -825,7 +825,7 @@ footer span { font-size: 0.8rem; color: rgba(255,255,255,0.28); }
   <div class="hero-left">
     <div class="hero-eyebrow">
       <span class="eyebrow-line"></span>
-      Open for Projects · 2026
+      Open for Projects · 2025
     </div>
     <h1 class="hero-h1">
       BUILD<br>
@@ -839,7 +839,7 @@ footer span { font-size: 0.8rem; color: rgba(255,255,255,0.28); }
     </div>
     <div class="hero-divider">
       <div>
-        <div class="hd-num">2026</div>
+        <div class="hd-num">2025</div>
         <div class="hd-label">Founded</div>
       </div>
       <div>
@@ -916,7 +916,7 @@ footer span { font-size: 0.8rem; color: rgba(255,255,255,0.28); }
   <div class="about-body reveal">
     <div class="section-tag">Who We Are</div>
     <h2 class="section-h2">A studio built<br>for founders.</h2>
-    <p>ThumbStack was founded in 2026 to bridge the gap between great ideas and great software. We're a lean, focused team that moves fast — from zero to deployed, we handle the full stack.</p>
+    <p>ThumbStack was founded in 2025 to bridge the gap between great ideas and great software. We're a lean, focused team that moves fast — from zero to deployed, we handle the full stack.</p>
     <p>We don't just write code. We challenge assumptions, think deeply about your product, and build things that actually solve the problem — using proven technologies trusted by thousands of businesses worldwide.</p>
   </div>
   <div class="about-cards reveal d2">
@@ -1262,7 +1262,7 @@ footer span { font-size: 0.8rem; color: rgba(255,255,255,0.28); }
     <div>
       <div class="cta-tag">✦ Let's Work Together</div>
       <h2 class="cta-h2">Have an idea?<br>Let's build it.</h2>
-      <p class="cta-p">We're a new studio in 2026 — selective about the projects we take on, and fully committed when we do. Whether it's a Laravel web app, a WordPress site, or a cloud deployment, tell us what you're building.</p>
+      <p class="cta-p">We're a new studio in 2025 — selective about the projects we take on, and fully committed when we do. Whether it's a Laravel web app, a WordPress site, or a cloud deployment, tell us what you're building.</p>
       <div class="cta-socials">
         <a href="#">LinkedIn</a>
         <a href="#">GitHub</a>
@@ -1284,29 +1284,34 @@ footer span { font-size: 0.8rem; color: rgba(255,255,255,0.28); }
     <h2 class="pmodal-title">Tell us what<br>you're building.</h2>
     <p class="pmodal-sub">Fill this out and we'll get back to you directly — no email app needed.</p>
 
-    <!-- SUCCESS STATE -->
-    <div id="pf-success" style="display:none; text-align:center; padding:32px 0;">
+    <!-- Formspree success message -->
+    <div data-fs-success style="display:none; text-align:center; padding:32px 0;">
       <div style="font-size:2.8rem; margin-bottom:16px;">✅</div>
       <div style="font-family:'Bebas Neue',sans-serif; font-size:1.8rem; color:var(--ink); margin-bottom:10px;">Message Sent!</div>
       <p style="font-size:.88rem; color:var(--muted); line-height:1.6;">We received your inquiry and will reply within 24 hours. Thanks for reaching out!</p>
       <button id="pf-closeSuccess" style="margin-top:24px; background:var(--ink); color:#fff; border:none; padding:12px 28px; border-radius:100px; font-family:'Cabinet Grotesk',sans-serif; font-weight:700; font-size:.88rem; cursor:pointer;">Close</button>
     </div>
 
+    <!-- Formspree form-level error -->
+    <div data-fs-error style="display:none; font-size:.82rem; color:#c53030; background:#fff5f5; border:1px solid #feb2b2; border-radius:10px; padding:12px 16px; margin-bottom:14px;"></div>
+
     <!-- FORM -->
-    <div class="pmodal-form" id="pf-formwrap">
+    <form class="pmodal-form" id="ts-contact-form">
       <div class="pf-row">
         <div class="pf-group">
           <label class="pf-label" for="pf-name">Your Name</label>
-          <input class="pf-input" id="pf-name" type="text" placeholder="Juan dela Cruz" />
+          <input class="pf-input" id="pf-name" name="name" type="text" placeholder="Juan dela Cruz" required data-fs-field />
+          <span style="font-size:.75rem; color:#c53030;" data-fs-error="name"></span>
         </div>
         <div class="pf-group">
           <label class="pf-label" for="pf-email">Your Email</label>
-          <input class="pf-input" id="pf-email" type="email" placeholder="you@company.com" />
+          <input class="pf-input" id="pf-email" name="email" type="email" placeholder="you@company.com" required data-fs-field />
+          <span style="font-size:.75rem; color:#c53030;" data-fs-error="email"></span>
         </div>
       </div>
       <div class="pf-group">
         <label class="pf-label" for="pf-project">Project Type</label>
-        <select class="pf-input pf-select" id="pf-project">
+        <select class="pf-input pf-select" id="pf-project" name="project_type" data-fs-field>
           <option value="">Select a type...</option>
           <option>Web App — Laravel / CodeIgniter</option>
           <option>WordPress / Elementor Site</option>
@@ -1320,7 +1325,7 @@ footer span { font-size: 0.8rem; color: rgba(255,255,255,0.28); }
       </div>
       <div class="pf-group">
         <label class="pf-label" for="pf-budget">Estimated Budget</label>
-        <select class="pf-input pf-select" id="pf-budget">
+        <select class="pf-input pf-select" id="pf-budget" name="budget" data-fs-field>
           <option value="">Select a range...</option>
           <option>Under $500</option>
           <option>$500 – $1,000</option>
@@ -1332,20 +1337,20 @@ footer span { font-size: 0.8rem; color: rgba(255,255,255,0.28); }
       </div>
       <div class="pf-group">
         <label class="pf-label" for="pf-message">What are you building?</label>
-        <textarea class="pf-input pf-textarea" id="pf-message" rows="4" placeholder="Describe your project, goals, timeline, or anything else we should know..."></textarea>
+        <textarea class="pf-input pf-textarea" id="pf-message" name="message" rows="4" placeholder="Describe your project, goals, timeline, or anything else we should know..." required data-fs-field></textarea>
+        <span style="font-size:.75rem; color:#c53030;" data-fs-error="message"></span>
       </div>
-      <div id="pf-error" style="display:none; font-size:.82rem; color:#c53030; background:#fff5f5; border:1px solid #feb2b2; border-radius:10px; padding:12px 16px;"></div>
-      <button class="pf-submit" id="pfSubmit">Send Message →</button>
+      <button class="pf-submit" type="submit" data-fs-submit-btn>Send Message →</button>
       <p class="pf-note">Sent directly to <strong>superadminthumbstack@gmail.com</strong> · We reply within 24 hrs</p>
-    </div>
+    </form>
   </div>
 </div>
 
 <!-- FOOTER -->
 <footer>
   <a href="#" class="nav-logo">ThumbStack <span class="logo-dot"></span></a>
-  <span>Build, Solve, Scale · © 2026 ThumbStack</span>
-  <span>Created by kb ✦</span>
+  <span>Build, Solve, Scale · © 2025 ThumbStack</span>
+  <span>Founded with precision ✦</span>
 </footer>
 
 <script>
@@ -1423,10 +1428,6 @@ function openProjectModal() {
 function closeProjectModal() {
   projectModal.classList.remove('open');
   document.body.style.overflow = '';
-  // reset form when closing
-  document.getElementById('pf-success').style.display = 'none';
-  document.getElementById('pf-formwrap').style.display = 'flex';
-  document.getElementById('pf-error').style.display = 'none';
 }
 
 openBtn.addEventListener('click', openProjectModal);
@@ -1439,78 +1440,10 @@ document.addEventListener('keydown', function(e) {
   if (e.key === 'Escape') closeProjectModal();
 });
 
-// ── FORMSPREE SUBMISSION ──
-// SETUP STEPS:
-// 1. Go to https://formspree.io and sign up (free)
-// 2. Click "New Form", name it "ThumbStack Contact"
-// 3. Copy your form ID (looks like: xpwzabcd)
-// 4. Replace YOUR_FORMSPREE_ID below with your actual ID
-var FORMSPREE_ID = 'YOUR_FORMSPREE_ID';
-
-document.getElementById('pfSubmit').addEventListener('click', function() {
-  var name    = document.getElementById('pf-name').value.trim();
-  var email   = document.getElementById('pf-email').value.trim();
-  var project = document.getElementById('pf-project').value;
-  var budget  = document.getElementById('pf-budget').value;
-  var message = document.getElementById('pf-message').value.trim();
-  var errBox  = document.getElementById('pf-error');
-  var btn     = document.getElementById('pfSubmit');
-
-  // validate
-  errBox.style.display = 'none';
-  if (!name) { errBox.textContent = 'Please enter your name.'; errBox.style.display = 'block'; return; }
-  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { errBox.textContent = 'Please enter a valid email address.'; errBox.style.display = 'block'; return; }
-  if (!message) { errBox.textContent = 'Please tell us a bit about your project.'; errBox.style.display = 'block'; return; }
-
-  // check Formspree ID is set
-  if (FORMSPREE_ID === 'YOUR_FORMSPREE_ID') {
-    errBox.innerHTML = '⚠️ Formspree not connected yet. See setup instructions in the code, or email us directly at <a href="mailto:superadminthumbstack@gmail.com" style="color:#00AA58;">superadminthumbstack@gmail.com</a>';
-    errBox.style.display = 'block';
-    return;
-  }
-
-  // loading state
-  btn.textContent = 'Sending...';
-  btn.disabled = true;
-
-  fetch('https://formspree.io/f/' + FORMSPREE_ID, {
-    method: 'POST',
-    headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      name:    name,
-      email:   email,
-      project: project || 'Not specified',
-      budget:  budget  || 'Not specified',
-      message: message,
-      _subject: 'New Project Inquiry — ' + (project || 'ThumbStack')
-    })
-  })
-  .then(function(res) {
-    if (res.ok) {
-      // success
-      document.getElementById('pf-formwrap').style.display = 'none';
-      document.getElementById('pf-success').style.display = 'block';
-      // clear fields
-      document.getElementById('pf-name').value = '';
-      document.getElementById('pf-email').value = '';
-      document.getElementById('pf-project').value = '';
-      document.getElementById('pf-budget').value = '';
-      document.getElementById('pf-message').value = '';
-    } else {
-      return res.json().then(function(data) {
-        throw new Error(data.errors ? data.errors.map(function(e){return e.message;}).join(', ') : 'Something went wrong. Please try again.');
-      });
-    }
-  })
-  .catch(function(err) {
-    errBox.textContent = err.message || 'Network error. Please check your connection and try again.';
-    errBox.style.display = 'block';
-  })
-  .finally(function() {
-    btn.textContent = 'Send Message →';
-    btn.disabled = false;
-  });
-});
+// ── FORMSPREE AJAX SDK ──
+window.formspree = window.formspree || function() { (formspree.q = formspree.q || []).push(arguments); };
+formspree('initForm', { formElement: '#ts-contact-form', formId: 'xkoedzdo' });
 </script>
+<script src="https://unpkg.com/@formspree/ajax@1" defer></script>
 </body>
 </html>
